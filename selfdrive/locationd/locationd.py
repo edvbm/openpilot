@@ -66,10 +66,6 @@ class LocationEstimator:
   def reset(self, t: float, x_initial: np.ndarray = PoseKalman.initial_x, P_initial: np.ndarray = PoseKalman.initial_P):
     self.kf.init_state(x_initial, covs=P_initial, filter_time=t)
 
-  def _validate_sensor_source(self, source: log.SensorEventData.SensorSource):
-    # some segments have two IMUs, ignore the second one
-    return source != log.SensorEventData.SensorSource.bmx055
-
   def _validate_sensor_time(self, sensor_time: float, t: float):
     # ignore empty readings
     if sensor_time == 0:
@@ -102,9 +98,6 @@ class LocationEstimator:
       if not self._validate_sensor_time(sensor_time, t) or not self._validate_timestamp(sensor_time):
         return HandleLogResult.TIMING_INVALID
 
-      if not self._validate_sensor_source(msg.source):
-        return HandleLogResult.SENSOR_SOURCE_INVALID
-
       v = msg.acceleration.v
       meas = np.array([-v[2], -v[1], -v[0]])
       if np.linalg.norm(meas) >= ACCEL_SANITY_CHECK:
@@ -121,9 +114,6 @@ class LocationEstimator:
 
       if not self._validate_sensor_time(sensor_time, t) or not self._validate_timestamp(sensor_time):
         return HandleLogResult.TIMING_INVALID
-
-      if not self._validate_sensor_source(msg.source):
-        return HandleLogResult.SENSOR_SOURCE_INVALID
 
       v = msg.gyroUncalibrated.v
       meas = np.array([-v[2], -v[1], -v[0]])

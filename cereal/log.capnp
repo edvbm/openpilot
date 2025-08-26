@@ -371,10 +371,10 @@ struct SensorEventData {
     lsm6ds3 @5;   # includes LSM6DS3 and LSM6DS3TR, TR = tape reel
     bmp280 @6;    # barometer
     mmc3416x @7;  # magnetometer
-    bmx055 @8;
     rpr0521 @9;
     lsm6ds3trc @10;
     mmc5603nj @11;
+    bmx055DEPRECATED @8;
   }
 }
 
